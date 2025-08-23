@@ -1,0 +1,265 @@
+---
+alwaysApply: true
+---
+# Next.js + React + TypeScript + TailwindCSS + Jest Best Practices
+
+## Project Overview
+This is a Next.js 15 project using React 19, TypeScript, TailwindCSS 4, and Jest for testing. Follow these rules to maintain high code quality and consistency.
+
+## General Principles
+
+### SOLID Principles
+- **Single Responsibility**: Each component/function should have one clear purpose
+- **Open/Closed**: Components should be open for extension, closed for modification
+- **Liskov Substitution**: Derived components should be substitutable for their base types
+- **Interface Segregation**: Create small, focused interfaces rather than large ones
+- **Dependency Inversion**: Depend on abstractions, not concretions
+
+### DRY (Don't Repeat Yourself)
+- Extract reusable logic into custom hooks
+- Create shared components for common UI patterns
+- Use TypeScript interfaces/types for shared data structures
+- Implement utility functions for repeated operations
+
+## File Structure & Organization
+
+### Folder Structure
+```
+src/
+├── app/ # Next.js App Router
+│ ├── (auth)/ # Route groups
+│ ├── api/ # API routes
+│ └── globals.css # Global styles
+├── components/ # Reusable UI components
+│ ├── ui/ # Base UI components (Button, Input, etc.)
+│ ├── forms/ # Form-specific components
+│ └── layout/ # Layout components (Header, Footer, etc.)
+├── hooks/ # Custom React hooks
+├── lib/ # Utility functions and configurations
+├── types/ # TypeScript type definitions
+├── constants/ # Application constants
+├── utils/ # Helper functions
+└── tests/ # Test files
+```
+
+
+### File Naming Conventions
+- **Components**: PascalCase (`UserProfile.tsx`)
+- **Hooks**: camelCase starting with 'use' (`useUserData.ts`)
+- **Utils/Libs**: camelCase (`formatDate.ts`)
+- **Types**: PascalCase (`UserTypes.ts`)
+- **Constants**: SCREAMING_SNAKE_CASE in camelCase files (`apiEndpoints.ts`)
+
+## React & Component Best Practices
+
+### Component Structure
+- Always use functional components with TypeScript
+- Use React.FC sparingly, prefer explicit return types
+- Export components as default when they're the main export
+- Use named exports for utility functions and types
+
+```typescript
+interface UserCardProps {
+  user: User;
+  onEdit?: (user: User) => void;
+  className?: string;
+}
+
+export default function UserCard({ user, onEdit, className }: UserCardProps) {
+  return (
+    <div className={cn("rounded-lg border p-4", className)}>
+      {/* component content */}
+    </div>
+  );
+}
+```
+
+### Props & TypeScript
+- Always define explicit prop interfaces
+- Use optional props (`?`) appropriately
+- Prefer `interface` over `type` for component props
+- Use generic types for reusable components
+- Avoid `any` - use `unknown` or specific types
+
+### State Management
+- Use `useState` for local component state
+- Use `useReducer` for complex state logic
+- Extract state logic to custom hooks when reused
+- Keep state as close to where it's used as possible
+
+### Custom Hooks
+- Start with 'use' prefix
+- Return objects for multiple values, not arrays (unless order matters)
+- Include proper TypeScript return types
+- Handle loading and error states consistently
+
+```typescript
+interface UseUserDataReturn {
+  user: User | null;
+  loading: boolean;
+  error: string | null;
+  refetch: () => void;
+}
+
+export function useUserData(userId: string): UseUserDataReturn {
+  // hook implementation
+}
+```
+
+## Next.js Specific Rules
+
+### App Router (Next.js 15)
+- Use Server Components by default
+- Add 'use client' directive only when necessary
+- Prefer server-side data fetching when possible
+- Use proper loading.tsx and error.tsx files
+- Implement proper metadata for SEO
+
+### API Routes
+- Use proper HTTP status codes
+- Implement error handling consistently
+- Validate input data with TypeScript/Zod
+- Use proper TypeScript types for request/response
+
+### Performance
+- Use `next/image` for all images
+- Implement proper lazy loading
+- Use `next/dynamic` for code splitting
+- Minimize client-side JavaScript
+
+## TailwindCSS Guidelines
+
+### Class Organization
+- Use `cn()` utility for conditional classes (install `clsx` and `tailwind-merge`)
+- Order classes: layout → spacing → sizing → colors → typography → effects
+- Extract common class combinations into CSS components or utilities
+- Use semantic class names for complex layouts
+
+```typescript
+// Good
+const buttonVariants = {
+  primary: "bg-blue-600 hover:bg-blue-700 text-white",
+  secondary: "bg-gray-200 hover:bg-gray-300 text-gray-900",
+};
+
+// Usage
+<button className={cn("px-4 py-2 rounded-md font-medium", buttonVariants.primary, className)}>
+```
+
+### Responsive Design
+- Mobile-first approach (default styles for mobile)
+- Use Tailwind's responsive prefixes (`sm:`, `md:`, `lg:`, `xl:`, `2xl:`)
+- Test on multiple screen sizes
+
+## Accessibility Standards
+
+### Semantic HTML
+- Use proper HTML5 semantic elements (`header`, `nav`, `main`, `section`, `article`, `aside`, `footer`)
+- Use headings hierarchically (`h1` → `h2` → `h3`)
+- Provide alt text for images
+- Use proper form labels and ARIA attributes
+
+### ARIA and Keyboard Navigation
+- Implement proper focus management
+- Use ARIA labels, descriptions, and roles where needed
+- Ensure all interactive elements are keyboard accessible
+- Maintain logical tab order
+
+```tsx
+// Good
+<button
+  aria-label="Close dialog"
+  aria-describedby="dialog-description"
+  onClick={onClose}
+  className="..."
+>
+  <X className="h-4 w-4" />
+</button>
+```
+
+## Testing with Jest
+
+### Test Structure
+- Follow AAA pattern: Arrange, Act, Assert
+- Use descriptive test names that explain the behavior
+- Group related tests with `describe` blocks
+- Test user interactions, not implementation details
+
+### Component Testing
+- Use React Testing Library
+- Test from user's perspective
+- Mock external dependencies
+- Test error states and edge cases
+
+```typescript
+describe('UserCard', () => {
+  it('should display user information correctly', () => {
+    const mockUser = { id: '1', name: 'John Doe', email: 'john@example.com' };
+    render(<UserCard user={mockUser} />);
+    
+    expect(screen.getByText('John Doe')).toBeInTheDocument();
+    expect(screen.getByText('john@example.com')).toBeInTheDocument();
+  });
+});
+```
+
+## Code Quality & Standards
+
+### Error Handling
+- Use proper error boundaries for React components
+- Implement consistent error handling in API routes
+- Provide meaningful error messages to users
+- Log errors appropriately for debugging
+
+### Performance Optimization
+- Use React.memo() for expensive components
+- Implement proper key props for lists
+- Avoid unnecessary re-renders
+- Use useCallback and useMemo judiciously
+
+### Code Style
+- Use meaningful variable and function names
+- Keep functions small and focused
+- Add JSDoc comments for complex logic
+- Use TypeScript strict mode
+- Follow consistent import ordering:
+  1. React imports
+  2. Third-party libraries
+  3. Internal components/hooks
+  4. Relative imports
+  5. Type-only imports last
+
+```typescript
+import React from 'react';
+import { NextPage } from 'next';
+import { Button } from '@/components/ui/Button';
+import { useUserData } from '../hooks/useUserData';
+import type { User } from '@/types/User';
+```
+
+## Security Best Practices
+- Sanitize user inputs
+- Use environment variables for sensitive data
+- Implement proper authentication/authorization
+- Validate data on both client and server
+- Use HTTPS in production
+
+## Git & Development Workflow
+- Write meaningful commit messages
+- Keep commits atomic and focused
+- Use feature branches
+- Write tests before pushing to main
+- Update documentation when adding new features
+
+## AI Assistant Instructions
+When generating code:
+1. Always follow these established patterns and conventions
+2. Include proper TypeScript types and interfaces
+3. Implement accessibility features by default
+4. Add error handling and loading states
+5. Include relevant tests when creating new components
+6. Use the existing project structure and naming conventions
+7. Prioritize performance and user experience
+8. Follow the DRY principle and create reusable components
+9. Add proper JSDoc comments for complex functions
+10. Ensure responsive design with TailwindCSS
