@@ -32,7 +32,7 @@ src/
 │ └── globals.css # Global styles
 ├── components/ # Reusable UI components
 │ ├── ui/ # Base UI components (Button, Input, etc.)
-│ ├── forms/ # Form-specific components
+│ ├── forms/ # Form-specific componentsj
 │ └── layout/ # Layout components (Header, Footer, etc.)
 ├── hooks/ # Custom React hooks
 ├── lib/ # Utility functions and configurations
@@ -235,6 +235,73 @@ import { NextPage } from 'next';
 import { Button } from '@/components/ui/Button';
 import { useUserData } from '../hooks/useUserData';
 import type { User } from '@/types/User';
+```
+
+### Preventing Unused Imports
+- Configure ESLint to detect and warn about unused imports
+- Use TypeScript's `noUnusedLocals` and `noUnusedParameters` compiler options
+- Regularly clean up unused imports to keep code lean and improve build performance
+- Use IDE features or extensions that automatically remove unused imports on save
+- Avoid importing entire libraries when only specific functions are needed
+
+```typescript
+// Bad - importing entire library
+import * as _ from 'lodash';
+const result = _.debounce(fn, 300);
+
+// Good - import only what you need
+import { debounce } from 'lodash';
+const result = debounce(fn, 300);
+
+// Bad - unused import
+import React, { useState, useEffect } from 'react'; // useEffect is unused
+import { Button } from '@/components/ui/Button'; // Button is unused
+
+export default function MyComponent() {
+  const [count, setCount] = useState(0);
+  return <div>{count}</div>;
+}
+
+// Good - only necessary imports
+import React, { useState } from 'react';
+
+export default function MyComponent() {
+  const [count, setCount] = useState(0);
+  return <div>{count}</div>;
+}
+```
+
+#### ESLint Configuration
+Add these rules to your ESLint config to catch unused imports:
+
+```javascript
+// eslint.config.mjs
+export default [
+  {
+    rules: {
+      '@typescript-eslint/no-unused-vars': ['error', { 
+        argsIgnorePattern: '^_',
+        varsIgnorePattern: '^_',
+        ignoreRestSiblings: true 
+      }],
+      'no-unused-vars': 'off', // Turn off base rule as it conflicts with TypeScript rule
+      'import/no-unused-modules': ['error', { unusedExports: true }]
+    }
+  }
+];
+```
+
+#### TypeScript Configuration
+Enable these compiler options in `tsconfig.json`:
+
+```json
+{
+  "compilerOptions": {
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "exactOptionalPropertyTypes": true
+  }
+}
 ```
 
 ## Security Best Practices
