@@ -2,6 +2,8 @@
 
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app) with [`manual setup of Jest`](https://nextjs.org/docs/app/guides/testing/jest).
 
+It also leverages libraries like lucid-react, and fabric.js.
+
 Bootstrap configuration:
 ```bash
 ✔ Would you like to use TypeScript? … Yes
