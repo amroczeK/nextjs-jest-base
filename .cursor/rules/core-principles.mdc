@@ -1,0 +1,124 @@
+---
+alwaysApply: true
+---
+
+# Core Development Principles
+
+## SOLID Principles
+
+- **Single Responsibility**: Each component/function should have one clear purpose
+- **Open/Closed**: Components should be open for extension, closed for modification
+- **Liskov Substitution**: Derived components should be substitutable for their base types
+- **Interface Segregation**: Create small, focused interfaces rather than large ones
+- **Dependency Inversion**: Depend on abstractions, not concretions
+
+## DRY (Don't Repeat Yourself)
+
+- Extract reusable logic into custom hooks
+- Create shared components for common UI patterns
+- Use TypeScript interfaces/types for shared data structures
+- Implement utility functions for repeated operations
+
+## File Structure & Organization
+
+### Folder Structure
+
+```
+src/
+├── app/ # Next.js App Router
+│ ├── (auth)/ # Route groups
+│ ├── api/ # API routes
+│ └── globals.css # Global styles
+├── components/ # Reusable UI components
+│ ├── ui/ # Base UI components (Button, Input, etc.)
+│ ├── forms/ # Form-specific components
+│ └── layout/ # Layout components (Header, Footer, etc.)
+├── hooks/ # Custom React hooks
+├── lib/ # Utility functions and configurations
+├── types/ # TypeScript type definitions
+├── constants/ # Application constants
+├── utils/ # Helper functions
+└── tests/ # Test files
+```
+
+### File Naming Conventions
+
+- **Components**: PascalCase (`UserProfile.tsx`)
+- **Hooks**: camelCase starting with 'use' (`useUserData.ts`)
+- **Utils/Libs**: camelCase (`formatDate.ts`)
+- **Types**: PascalCase (`UserTypes.ts`)
+- **Constants**: SCREAMING_SNAKE_CASE in camelCase files (`apiEndpoints.ts`)
+
+## General Best Practices
+
+- Write meaningful commit messages
+- Keep commits atomic and focused
+- Use feature branches
+- Write tests before pushing to main
+- Update documentation when adding new features
+- Follow consistent import ordering:
+  1. React imports
+  2. Third-party libraries
+  3. Internal components/hooks
+  4. Relative imports
+  5. Type-only imports last
+# Core Development Principles
+
+## SOLID Principles
+
+- **Single Responsibility**: Each component/function should have one clear purpose
+- **Open/Closed**: Components should be open for extension, closed for modification
+- **Liskov Substitution**: Derived components should be substitutable for their base types
+- **Interface Segregation**: Create small, focused interfaces rather than large ones
+- **Dependency Inversion**: Depend on abstractions, not concretions
+
+## DRY (Don't Repeat Yourself)
+
+- Extract reusable logic into custom hooks
+- Create shared components for common UI patterns
+- Use TypeScript interfaces/types for shared data structures
+- Implement utility functions for repeated operations
+
+## File Structure & Organization
+
+### Folder Structure
+
+```
+src/
+├── app/ # Next.js App Router
+│ ├── (auth)/ # Route groups
+│ ├── api/ # API routes
+│ └── globals.css # Global styles
+├── components/ # Reusable UI components
+│ ├── ui/ # Base UI components (Button, Input, etc.)
+│ ├── forms/ # Form-specific components
+│ └── layout/ # Layout components (Header, Footer, etc.)
+├── hooks/ # Custom React hooks
+├── lib/ # Utility functions and configurations
+├── types/ # TypeScript type definitions
+├── constants/ # Application constants
+├── utils/ # Helper functions
+└── tests/ # Test files
+```
+
+### File Naming Conventions
+
+- **Components**: PascalCase (`UserProfile.tsx`)
+- **Hooks**: camelCase starting with 'use' (`useUserData.ts`)
+- **Utils/Libs**: camelCase (`formatDate.ts`)
+- **Types**: PascalCase (`UserTypes.ts`)
+- **Constants**: SCREAMING_SNAKE_CASE in camelCase files (`apiEndpoints.ts`)
+
+## General Best Practices
+
+- Write meaningful commit messages
+- Keep commits atomic and focused
+- Use feature branches
+- Write tests before pushing to main
+- Update documentation when adding new features
+- Follow consistent import ordering:
+  1. React imports
+  2. Third-party libraries
+  3. Internal components/hooks
+  4. Relative imports
+  5. Type-only imports last

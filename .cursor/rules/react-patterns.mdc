@@ -1,0 +1,148 @@
+---
+alwaysApply: true
+---
+
+# React Patterns & Best Practices
+
+## Component Structure
+
+- Always use functional components with TypeScript
+- Use React.FC sparingly, prefer explicit return types
+- Export components as default when they're the main export
+- Use named exports for utility functions and types
+
+```typescript
+interface UserCardProps {
+  user: User;
+  onEdit?: (user: User) => void;
+  className?: string;
+}
+
+export default function UserCard({ user, onEdit, className }: UserCardProps) {
+  return (
+    <div className={cn("rounded-lg border p-4", className)}>
+      {/* component content */}
+    </div>
+  );
+}
+```
+
+## Props & TypeScript
+
+- Always define explicit prop interfaces
+- Use optional props (`?`) appropriately
+- Prefer `interface` over `type` for component props
+- Use generic types for reusable components
+- Avoid `any` - use `unknown` or specific types
+
+## State Management
+
+- Use `useState` for local component state
+- Use `useReducer` for complex state logic
+- Extract state logic to custom hooks when reused
+- Keep state as close to where it's used as possible
+
+## Custom Hooks
+
+- Start with 'use' prefix
+- Return objects for multiple values, not arrays (unless order matters)
+- Include proper TypeScript return types
+- Handle loading and error states consistently
+
+```typescript
+interface UseUserDataReturn {
+  user: User | null;
+  loading: boolean;
+  error: string | null;
+  refetch: () => void;
+}
+
+export function useUserData(userId: string): UseUserDataReturn {
+  // hook implementation
+}
+```
+
+## Performance Optimization
+
+- Use React.memo() for expensive components
+- Implement proper key props for lists
+- Avoid unnecessary re-renders
+- Use useCallback and useMemo judiciously
+
+## Error Handling
+
+- Use proper error boundaries for React components
+- Provide meaningful error messages to users
+- Log errors appropriately for debugging
+# React Patterns & Best Practices
+
+## Component Structure
+
+- Always use functional components with TypeScript
+- Use React.FC sparingly, prefer explicit return types
+- Export components as default when they're the main export
+- Use named exports for utility functions and types
+
+```typescript
+interface UserCardProps {
+  user: User;
+  onEdit?: (user: User) => void;
+  className?: string;
+}
+
+export default function UserCard({ user, onEdit, className }: UserCardProps) {
+  return (
+    <div className={cn("rounded-lg border p-4", className)}>
+      {/* component content */}
+    </div>
+  );
+}
+```
+
+## Props & TypeScript
+
+- Always define explicit prop interfaces
+- Use optional props (`?`) appropriately
+- Prefer `interface` over `type` for component props
+- Use generic types for reusable components
+- Avoid `any` - use `unknown` or specific types
+
+## State Management
+
+- Use `useState` for local component state
+- Use `useReducer` for complex state logic
+- Extract state logic to custom hooks when reused
+- Keep state as close to where it's used as possible
+
+## Custom Hooks
+
+- Start with 'use' prefix
+- Return objects for multiple values, not arrays (unless order matters)
+- Include proper TypeScript return types
+- Handle loading and error states consistently
+
+```typescript
+interface UseUserDataReturn {
+  user: User | null;
+  loading: boolean;
+  error: string | null;
+  refetch: () => void;
+}
+
+export function useUserData(userId: string): UseUserDataReturn {
+  // hook implementation
+}
+```
+
+## Performance Optimization
+
+- Use React.memo() for expensive components
+- Implement proper key props for lists
+- Avoid unnecessary re-renders
+- Use useCallback and useMemo judiciously
+
+## Error Handling
+
+- Use proper error boundaries for React components
+- Provide meaningful error messages to users
+- Log errors appropriately for debugging

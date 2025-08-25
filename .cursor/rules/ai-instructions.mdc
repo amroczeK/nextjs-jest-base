@@ -1,0 +1,76 @@
+---
+alwaysApply: true
+---
+
+# AI Assistant Instructions
+
+## When Generating Code
+
+1. Always follow these established patterns and conventions
+2. Include proper TypeScript types and interfaces
+3. Implement accessibility features by default
+4. Add error handling and loading states
+5. Include relevant tests when creating new components
+6. Use the existing project structure and naming conventions
+7. Prioritize performance and user experience
+8. Follow the DRY principle and create reusable components
+9. Add proper JSDoc comments for complex functions
+10. Ensure responsive design with TailwindCSS
+
+## Validation and Testing
+
+- **Always use `npm run build` to validate feature implementations after completion**
+- **Do NOT use `npm run dev` for validation**
+- Resolve any build errors before considering the feature complete
+- Ensure TypeScript compilation passes without errors
+- Verify that all imports and dependencies are properly resolved
+- Check that Server/Client Component boundaries are correctly defined
+
+## Development Workflow
+
+- Follow the established file structure and naming conventions
+- Use Server Components by default, Client Components only when necessary
+- Implement proper error boundaries and loading states
+- Test components from the user's perspective
+- Ensure all interactive elements are keyboard accessible
+- Use semantic HTML and proper ARIA attributes
+- Follow TypeScript strict mode guidelines
+- Implement proper cleanup in useEffect hooks
+- Use React Testing Library for component testing
+- Mock external dependencies appropriately
+# AI Assistant Instructions
+
+## When Generating Code
+
+1. Always follow these established patterns and conventions
+2. Include proper TypeScript types and interfaces
+3. Implement accessibility features by default
+4. Add error handling and loading states
+5. Include relevant tests when creating new components
+6. Use the existing project structure and naming conventions
+7. Prioritize performance and user experience
+8. Follow the DRY principle and create reusable components
+9. Add proper JSDoc comments for complex functions
+10. Ensure responsive design with TailwindCSS
+
+## Validation and Testing
+
+- **Always use `npm run build` to validate feature implementations after completion**
+- **Do NOT use `npm run dev` for validation**
+- Resolve any build errors before considering the feature complete
+- Ensure TypeScript compilation passes without errors
+- Verify that all imports and dependencies are properly resolved
+- Check that Server/Client Component boundaries are correctly defined
+
+## Development Workflow
+
+- Follow the established file structure and naming conventions
+- Use Server Components by default, Client Components only when necessary
+- Implement proper error boundaries and loading states
+- Test components from the user's perspective
+- Ensure all interactive elements are keyboard accessible
+- Use semantic HTML and proper ARIA attributes
+- Follow TypeScript strict mode guidelines
+- Implement proper cleanup in useEffect hooks
+- Use React Testing Library for component testing
+- Mock external dependencies appropriately

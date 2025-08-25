@@ -1,0 +1,76 @@
+---
+alwaysApply: true
+---
+
+# Accessibility Standards
+
+## Semantic HTML
+
+- Use proper HTML5 semantic elements (`header`, `nav`, `main`, `section`, `article`, `aside`, `footer`)
+- Use headings hierarchically (`h1` → `h2` → `h3`)
+- Provide alt text for images
+- Use proper form labels and ARIA attributes
+
+## ARIA and Keyboard Navigation
+
+- Implement proper focus management
+- Use ARIA labels, descriptions, and roles where needed
+- Ensure all interactive elements are keyboard accessible
+- Maintain logical tab order
+
+```tsx
+// Good
+<button
+  aria-label="Close dialog"
+  aria-describedby="dialog-description"
+  onClick={onClose}
+  className="..."
+>
+  <X className="h-4 w-4" />
+</button>
+```
+
+## Accessibility Best Practices
+
+- Test with screen readers
+- Ensure sufficient color contrast
+- Provide text alternatives for non-text content
+- Make interactive elements clearly identifiable
+- Support keyboard-only navigation
+- Use semantic markup for better screen reader support
+# Accessibility Standards
+
+## Semantic HTML
+
+- Use proper HTML5 semantic elements (`header`, `nav`, `main`, `section`, `article`, `aside`, `footer`)
+- Use headings hierarchically (`h1` → `h2` → `h3`)
+- Provide alt text for images
+- Use proper form labels and ARIA attributes
+
+## ARIA and Keyboard Navigation
+
+- Implement proper focus management
+- Use ARIA labels, descriptions, and roles where needed
+- Ensure all interactive elements are keyboard accessible
+- Maintain logical tab order
+
+```tsx
+// Good
+<button
+  aria-label="Close dialog"
+  aria-describedby="dialog-description"
+  onClick={onClose}
+  className="..."
+>
+  <X className="h-4 w-4" />
+</button>
+```
+
+## Accessibility Best Practices
+
+- Test with screen readers
+- Ensure sufficient color contrast
+- Provide text alternatives for non-text content
+- Make interactive elements clearly identifiable
+- Support keyboard-only navigation
+- Use semantic markup for better screen reader support

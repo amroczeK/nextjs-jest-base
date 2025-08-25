@@ -1,0 +1,72 @@
+---
+alwaysApply: true
+---
+
+# Styling Standards
+
+## TailwindCSS Guidelines
+
+### Class Organization
+
+- Use `cn()` utility for conditional classes (install `clsx` and `tailwind-merge`)
+- Order classes: layout → spacing → sizing → colors → typography → effects
+- Extract common class combinations into CSS components or utilities
+- Use semantic class names for complex layouts
+
+```typescript
+// Good
+const buttonVariants = {
+  primary: "bg-blue-600 hover:bg-blue-700 text-white",
+  secondary: "bg-gray-200 hover:bg-gray-300 text-gray-900",
+};
+
+// Usage
+<button className={cn("px-4 py-2 rounded-md font-medium", buttonVariants.primary, className)}>
+```
+
+### Responsive Design
+
+- Mobile-first approach (default styles for mobile)
+- Use Tailwind's responsive prefixes (`sm:`, `md:`, `lg:`, `xl:`, `2xl:`)
+- Test on multiple screen sizes
+
+### Best Practices
+
+- Use semantic class names for complex layouts
+- Extract common class combinations into utilities
+- Maintain consistent spacing and sizing scales
+- Use CSS custom properties for theme values when needed
+# Styling Standards
+
+## TailwindCSS Guidelines
+
+### Class Organization
+
+- Use `cn()` utility for conditional classes (install `clsx` and `tailwind-merge`)
+- Order classes: layout → spacing → sizing → colors → typography → effects
+- Extract common class combinations into CSS components or utilities
+- Use semantic class names for complex layouts
+
+```typescript
+// Good
+const buttonVariants = {
+  primary: "bg-blue-600 hover:bg-blue-700 text-white",
+  secondary: "bg-gray-200 hover:bg-gray-300 text-gray-900",
+};
+
+// Usage
+<button className={cn("px-4 py-2 rounded-md font-medium", buttonVariants.primary, className)}>
+```
+
+### Responsive Design
+
+- Mobile-first approach (default styles for mobile)
+- Use Tailwind's responsive prefixes (`sm:`, `md:`, `lg:`, `xl:`, `2xl:`)
+- Test on multiple screen sizes
+
+### Best Practices
+
+- Use semantic class names for complex layouts
+- Extract common class combinations into utilities
+- Maintain consistent spacing and sizing scales
+- Use CSS custom properties for theme values when needed
