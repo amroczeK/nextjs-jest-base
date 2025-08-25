@@ -1,0 +1,402 @@
+---
+description: "Fabric.js V6 canvas library implementation and best practices"
+alwaysApply: false
+---
+
+# Fabric.js V6 Canvas Library
+
+## Overview
+
+Fabric.js is a powerful HTML5 canvas library that provides an interactive object model for canvas elements. It supports shapes, controls, brushes, and advanced drawing capabilities.
+
+## Installation & Setup
+
+```bash
+npm install fabric
+# or
+yarn add fabric
+```
+
+## Basic Canvas Component Structure
+
+Always use the 'use client' directive for Fabric.js components as they require browser APIs:
+
+```typescript
+"use client";
+
+import React, { useEffect, useRef, useCallback } from "react";
+import * as fabric from "fabric";
+
+interface FabricJSCanvasProps {
+  width?: number;
+  height?: number;
+  className?: string;
+  onCanvasReady?: (canvas: fabric.Canvas) => void;
+}
+
+export default function FabricJSCanvas({
+  width = 800,
+  height = 600,
+  className,
+  onCanvasReady,
+}: FabricJSCanvasProps) {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const fabricCanvasRef = useRef<fabric.Canvas | null>(null);
+
+  useEffect(() => {
+    if (!canvasRef.current) return;
+
+    const canvas = new fabric.Canvas(canvasRef.current, {
+      width,
+      height,
+      backgroundColor: "#ffffff",
+      selection: true,
+      preserveObjectStacking: true,
+    });
+
+    fabricCanvasRef.current = canvas;
+
+    if (onCanvasReady) {
+      onCanvasReady(canvas);
+    }
+
+    return () => {
+      canvas.dispose();
+      fabricCanvasRef.current = null;
+    };
+  }, [width, height, onCanvasReady]);
+
+  return (
+    <canvas
+      ref={canvasRef}
+      className={cn("border border-gray-300 rounded-lg", className)}
+    />
+  );
+}
+```
+
+## Canvas Context Management
+
+Create a custom hook to manage canvas context across components:
+
+```typescript
+interface UseCanvasContextReturn {
+  canvas: fabric.Canvas | null;
+  setCanvas: (canvas: fabric.Canvas | null) => void;
+  isReady: boolean;
+}
+
+export function useCanvasContext(): UseCanvasContextReturn {
+  const [canvas, setCanvas] = useState<fabric.Canvas | null>(null);
+  const [isReady, setIsReady] = useState(false);
+
+  useEffect(() => {
+    setIsReady(!!canvas);
+  }, [canvas]);
+
+  return { canvas, setCanvas, isReady };
+}
+```
+
+## Working with Shapes
+
+### Basic Shapes
+
+```typescript
+// Rectangle
+const rect = new fabric.Rect({
+  left: 100,
+  top: 100,
+  width: 100,
+  height: 100,
+  fill: "red",
+  stroke: "black",
+  strokeWidth: 2,
+});
+
+// Circle
+const circle = new fabric.Circle({
+  left: 200,
+  top: 200,
+  radius: 50,
+  fill: "blue",
+  stroke: "darkblue",
+  strokeWidth: 3,
+});
+
+// Text
+const text = new fabric.Text("Hello Fabric.js", {
+  left: 150,
+  top: 300,
+  fontSize: 24,
+  fill: "green",
+  fontFamily: "Arial",
+});
+
+canvas.add(rect, circle, text);
+canvas.renderAll();
+```
+
+### Shape Manipulation
+
+```typescript
+// Select and modify shapes
+rect.set({
+  fill: "yellow",
+  angle: 45,
+  scaleX: 1.5,
+  scaleY: 1.5,
+});
+
+// Group objects
+const group = new fabric.Group([rect, circle], {
+  left: 100,
+  top: 100,
+});
+
+canvas.add(group);
+canvas.setActiveObject(group);
+```
+
+## Controls and Interaction
+
+### Custom Controls
+
+```typescript
+// Add custom control points
+fabric.Object.prototype.controls.deleteControl = new fabric.Control({
+  x: -0.5,
+  y: -0.5,
+  offsetX: -10,
+  offsetY: -10,
+  cursorStyle: "pointer",
+  actionHandler: fabric.controlsUtils.deleteObject,
+  render: function (ctx, left, top, styleOverride, fabricObject) {
+    const size = 20;
+    ctx.save();
+    ctx.translate(left, top);
+    ctx.rect(-size / 2, -size / 2, size, size);
+    ctx.fillStyle = "red";
+    ctx.fill();
+    ctx.restore();
+  },
+});
+```
+
+### Event Handling
+
+```typescript
+// Mouse events
+canvas.on("mouse:down", (options) => {
+  if (options.target) {
+    console.log("Selected object:", options.target);
+  }
+});
+
+canvas.on("object:modified", (options) => {
+  console.log("Object modified:", options.target);
+});
+
+canvas.on("selection:created", (options) => {
+  console.log("Selection created:", options.selected);
+});
+```
+
+## Brushes and Drawing
+
+### Free Drawing
+
+```typescript
+// Enable free drawing
+canvas.isDrawingMode = true;
+canvas.freeDrawingBrush = new fabric.PencilBrush(canvas);
+canvas.freeDrawingBrush.color = "#000000";
+canvas.freeDrawingBrush.width = 5;
+
+// Custom brush
+class CustomBrush extends fabric.PencilBrush {
+  constructor(canvas: fabric.Canvas) {
+    super(canvas);
+    this.color = "#ff0000";
+    this.width = 10;
+  }
+
+  _render(ctx: CanvasRenderingContext2D) {
+    ctx.strokeStyle = this.color;
+    ctx.lineWidth = this.width;
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+  }
+}
+
+canvas.freeDrawingBrush = new CustomBrush(canvas);
+```
+
+### Pattern Brushes
+
+```typescript
+// Create pattern brush
+const patternBrush = new fabric.PatternBrush(canvas);
+patternBrush.source = new fabric.Rect({
+  width: 20,
+  height: 20,
+  fill: "red",
+});
+
+canvas.freeDrawingBrush = patternBrush;
+```
+
+## Performance Optimization
+
+### Object Pooling
+
+```typescript
+class ShapePool {
+  private pool: fabric.Object[] = [];
+  private maxSize: number;
+
+  constructor(maxSize = 100) {
+    this.maxSize = maxSize;
+  }
+
+  get(): fabric.Object | null {
+    return this.pool.pop() || null;
+  }
+
+  return(obj: fabric.Object): void {
+    if (this.pool.length < this.maxSize) {
+      obj.set({ left: 0, top: 0, visible: false });
+      this.pool.push(obj);
+    }
+  }
+}
+```
+
+### Canvas Rendering
+
+```typescript
+// Batch operations
+canvas.renderOnAddRemove = false;
+// ... perform multiple operations
+canvas.renderAll();
+
+// Use requestAnimationFrame for smooth animations
+function animate() {
+  // Update object properties
+  requestAnimationFrame(animate);
+}
+```
+
+## TypeScript Integration
+
+### Custom Type Definitions
+
+```typescript
+interface CustomShape extends fabric.Object {
+  customProperty?: string;
+  customMethod?: () => void;
+}
+
+interface CanvasOptions extends fabric.ICanvasOptions {
+  customOption?: boolean;
+}
+
+// Extend fabric objects
+declare module "fabric" {
+  namespace fabric {
+    interface Object {
+      customProperty?: string;
+    }
+  }
+}
+```
+
+## Testing Fabric.js Components
+
+### Mock Fabric.js in Tests
+
+```typescript
+// __mocks__/fabric.ts
+export const Canvas = jest.fn().mockImplementation(() => ({
+  add: jest.fn(),
+  remove: jest.fn(),
+  renderAll: jest.fn(),
+  dispose: jest.fn(),
+  on: jest.fn(),
+  off: jest.fn(),
+  setActiveObject: jest.fn(),
+  getActiveObject: jest.fn(),
+}));
+
+export const Rect = jest.fn().mockImplementation(() => ({
+  set: jest.fn(),
+  toObject: jest.fn(),
+}));
+
+export const Circle = jest.fn().mockImplementation(() => ({
+  set: jest.fn(),
+  toObject: jest.fn(),
+}));
+
+export const Text = jest.fn().mockImplementation(() => ({
+  set: jest.fn(),
+  toObject: jest.fn(),
+}));
+```
+
+### Component Testing
+
+```typescript
+import { render, screen } from "@testing-library/react";
+import FabricJSCanvas from "./FabricJSCanvas";
+
+jest.mock("fabric");
+
+describe("FabricJSCanvas", () => {
+  it("should render canvas element", () => {
+    render(<FabricJSCanvas />);
+    expect(screen.getByRole("img")).toBeInTheDocument();
+  });
+
+  it("should initialize fabric canvas on mount", () => {
+    const mockCanvas = {
+      add: jest.fn(),
+      renderAll: jest.fn(),
+      dispose: jest.fn(),
+    };
+
+    (fabric.Canvas as jest.Mock).mockImplementation(() => mockCanvas);
+
+    render(<FabricJSCanvas />);
+    expect(fabric.Canvas).toHaveBeenCalled();
+  });
+});
+```
+
+## Best Practices
+
+### Memory Management
+
+- Always dispose of canvas instances in useEffect cleanup
+- Remove event listeners when components unmount
+- Use object pooling for frequently created/destroyed objects
+- Limit the number of objects on canvas for performance
+
+### State Management
+
+- Keep canvas state in React state or context
+- Use useCallback for event handlers to prevent unnecessary re-renders
+- Implement undo/redo functionality using command pattern
+- Save canvas state as JSON for persistence
+
+### Error Handling
+
+```typescript
+try {
+  const canvas = new fabric.Canvas(canvasRef.current);
+  // ... canvas operations
+} catch (error) {
+  console.error("Failed to initialize canvas:", error);
+  // Handle gracefully - show fallback UI
+}
+```

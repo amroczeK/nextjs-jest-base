@@ -1,0 +1,42 @@
+---
+description: "Jest testing patterns and component testing standards"
+globs: ["**/*.test.*", "**/*.spec.*", "**/__tests__/**/*"]
+alwaysApply: false
+---
+
+# Testing Standards
+
+## Test Structure
+
+- Follow AAA pattern: Arrange, Act, Assert
+- Use descriptive test names that explain the behavior
+- Group related tests with `describe` blocks
+- Test user interactions, not implementation details
+
+## Component Testing
+
+- Use React Testing Library
+- Test from user's perspective
+- Mock external dependencies
+- Test error states and edge cases
+
+```typescript
+describe("UserCard", () => {
+  it("should display user information correctly", () => {
+    const mockUser = { id: "1", name: "John Doe", email: "john@example.com" };
+    render(<UserCard user={mockUser} />);
+
+    expect(screen.getByText("John Doe")).toBeInTheDocument();
+    expect(screen.getByText("john@example.com")).toBeInTheDocument();
+  });
+});
+```
+
+## Testing Best Practices
+
+- Test component behavior, not implementation
+- Use semantic queries (getByRole, getByLabelText)
+- Avoid testing implementation details
+- Test accessibility features
+- Mock external services and APIs
+- Use proper test data factories

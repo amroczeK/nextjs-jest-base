@@ -1,0 +1,124 @@
+---
+alwaysApply: true
+---
+
+# Next.js Guidelines
+
+## App Router (Next.js 15)
+
+- Use Server Components by default
+- Add 'use client' directive only when necessary
+- Prefer server-side data fetching when possible
+- Use proper loading.tsx and error.tsx files
+- Implement proper metadata for SEO
+
+### When to Use "use client" Directive
+
+Always add `"use client"` at the top of your component file when you need:
+
+**Client-Side Interactivity:**
+
+- Event handlers (`onClick`, `onChange`, `onSubmit`, etc.)
+- Browser APIs (`alert`, `localStorage`, `sessionStorage`, `navigator`, etc.)
+- React hooks (`useState`, `useEffect`, `useCallback`, `useMemo`, etc.)
+- Custom hooks that use any of the above
+- DOM manipulation with refs
+- Canvas or WebGL libraries (like Fabric.js)
+
+**Common Error Prevention:**
+
+```typescript
+// ❌ This will cause an error in Server Components
+export default function Button() {
+  const handleClick = () => alert("Hello"); // Error: Event handlers cannot be passed to Client Component props
+  return <button onClick={handleClick}>Click me</button>;
+}
+
+// ✅ Add "use client" directive for client-side interactivity
+("use client");
+export default function Button() {
+  const handleClick = () => alert("Hello"); // Works correctly
+  return <button onClick={handleClick}>Click me</button>;
+}
+```
+
+**Performance Considerations:**
+
+- Server Components render on the server (faster initial page load)
+- Client Components render in the browser (enables interactivity)
+- Only convert to Client Components when absolutely necessary
+- Keep Server Components for static content and server-side data fetching
+
+## API Routes
+
+- Use proper HTTP status codes
+- Implement error handling consistently
+- Validate input data with TypeScript/Zod
+- Use proper TypeScript types for request/response
+
+## Performance
+
+- Use `next/image` for all images
+- Implement proper lazy loading
+- Use `next/dynamic` for code splitting
+- Minimize client-side JavaScript
+# Next.js Guidelines
+
+## App Router (Next.js 15)
+
+- Use Server Components by default
+- Add 'use client' directive only when necessary
+- Prefer server-side data fetching when possible
+- Use proper loading.tsx and error.tsx files
+- Implement proper metadata for SEO
+
+### When to Use "use client" Directive
+
+Always add `"use client"` at the top of your component file when you need:
+
+**Client-Side Interactivity:**
+
+- Event handlers (`onClick`, `onChange`, `onSubmit`, etc.)
+- Browser APIs (`alert`, `localStorage`, `sessionStorage`, `navigator`, etc.)
+- React hooks (`useState`, `useEffect`, `useCallback`, `useMemo`, etc.)
+- Custom hooks that use any of the above
+- DOM manipulation with refs
+- Canvas or WebGL libraries (like Fabric.js)
+
+**Common Error Prevention:**
+
+```typescript
+// ❌ This will cause an error in Server Components
+export default function Button() {
+  const handleClick = () => alert("Hello"); // Error: Event handlers cannot be passed to Client Component props
+  return <button onClick={handleClick}>Click me</button>;
+}
+
+// ✅ Add "use client" directive for client-side interactivity
+("use client");
+export default function Button() {
+  const handleClick = () => alert("Hello"); // Works correctly
+  return <button onClick={handleClick}>Click me</button>;
+}
+```
+
+**Performance Considerations:**
+
+- Server Components render on the server (faster initial page load)
+- Client Components render in the browser (enables interactivity)
+- Only convert to Client Components when absolutely necessary
+- Keep Server Components for static content and server-side data fetching
+
+## API Routes
+
+- Use proper HTTP status codes
+- Implement error handling consistently
+- Validate input data with TypeScript/Zod
+- Use proper TypeScript types for request/response
+
+## Performance
+
+- Use `next/image` for all images
+- Implement proper lazy loading
+- Use `next/dynamic` for code splitting
+- Minimize client-side JavaScript
