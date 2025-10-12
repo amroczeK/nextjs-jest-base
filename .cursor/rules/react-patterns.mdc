@@ -42,77 +42,17 @@ export default function UserCard({ user, onEdit, className }: UserCardProps) {
 - Extract state logic to custom hooks when reused
 - Keep state as close to where it's used as possible
 
-## Custom Hooks
+## Effects & Cleanup
 
-- Start with 'use' prefix
-- Return objects for multiple values, not arrays (unless order matters)
-- Include proper TypeScript return types
-- Handle loading and error states consistently
+- Always clean up subscriptions, timers, and listeners in `useEffect` return
+- Specify correct dependencies; prefer stable callbacks with `useCallback`
+- Avoid derived state when it can be computed during render
 
-```typescript
-interface UseUserDataReturn {
-  user: User | null;
-  loading: boolean;
-  error: string | null;
-  refetch: () => void;
-}
+## Event Handlers
 
-export function useUserData(userId: string): UseUserDataReturn {
-  // hook implementation
-}
-```
-
-## Performance Optimization
-
-- Use React.memo() for expensive components
-- Implement proper key props for lists
-- Avoid unnecessary re-renders
-- Use useCallback and useMemo judiciously
-
-## Error Handling
-
-- Use proper error boundaries for React components
-- Provide meaningful error messages to users
-- Log errors appropriately for debugging
-# React Patterns & Best Practices
-
-## Component Structure
-
-- Always use functional components with TypeScript
-- Use React.FC sparingly, prefer explicit return types
-- Export components as default when they're the main export
-- Use named exports for utility functions and types
-
-```typescript
-interface UserCardProps {
-  user: User;
-  onEdit?: (user: User) => void;
-  className?: string;
-}
-
-export default function UserCard({ user, onEdit, className }: UserCardProps) {
-  return (
-    <div className={cn("rounded-lg border p-4", className)}>
-      {/* component content */}
-    </div>
-  );
-}
-```
-
-## Props & TypeScript
-
-- Always define explicit prop interfaces
-- Use optional props (`?`) appropriately
-- Prefer `interface` over `type` for component props
-- Use generic types for reusable components
-- Avoid `any` - use `unknown` or specific types
-
-## State Management
-
-- Use `useState` for local component state
-- Use `useReducer` for complex state logic
-- Extract state logic to custom hooks when reused
-- Keep state as close to where it's used as possible
+- Prefix with `handle` (e.g., `handleSubmit`)
+- Use `useCallback` for handlers passed to children
+- Avoid inline arrow functions in hot paths to reduce re-renders
 
 ## Custom Hooks
 
@@ -136,13 +76,19 @@ export function useUserData(userId: string): UseUserDataReturn {
 
 ## Performance Optimization
 
-- Use React.memo() for expensive components
-- Implement proper key props for lists
-- Avoid unnecessary re-renders
-- Use useCallback and useMemo judiciously
+- Use `React.memo` for expensive components
+- Provide stable props (memoize functions and objects)
+- Implement proper `key` props for lists
+- Use `useMemo` for expensive computations
+
+## Accessibility
+
+- Prefer semantic elements; add ARIA labels when needed
+- Ensure focus management for dialogs/menus; trap focus where appropriate
+- Use `aria-live` for async status updates
 
 ## Error Handling
 
-- Use proper error boundaries for React components
+- Use error boundaries for unexpected render errors
 - Provide meaningful error messages to users
 - Log errors appropriately for debugging
