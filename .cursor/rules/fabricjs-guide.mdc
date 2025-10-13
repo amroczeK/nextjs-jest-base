@@ -432,6 +432,191 @@ test("renders canvas element", () => {
 });
 ```
 
+### Advanced Testing Example
+
+This example demonstrates a more complete testing setup for a `Canvas` component using Jest and React Testing Library. It includes mocking the entire `fabric` module, handling component API interactions, and testing event handlers.
+
+```tsx
+import React from "react";
+import { render, fireEvent, act } from "@testing-library/react";
+import Canvas, { CanvasApi } from "../features/canvas/Canvas";
+import * as fabric from "fabric";
+
+// Expose window and document to Fabric.js in a JSDOM environment
+fabric.setEnv({ ...fabric.getEnv(), window, document });
+
+const mockCanvas = {
+  add: jest.fn(),
+  remove: jest.fn(),
+  renderAll: jest.fn(),
+  setActiveObject: jest.fn(),
+  discardActiveObject: jest.fn(),
+  getActiveObjects: jest.fn((): fabric.Object[] => []),
+  getWidth: jest.fn(() => 800),
+  getHeight: jest.fn(() => 600),
+  dispose: jest.fn(),
+  isDrawingMode: false,
+  freeDrawingBrush: {
+    color: "",
+    width: 0,
+  },
+  sendToBack: jest.fn(),
+  setWidth: jest.fn(),
+  setHeight: jest.fn(),
+};
+
+jest.mock("fabric", () => {
+  const actualFabric = jest.requireActual("fabric");
+  return {
+    ...actualFabric,
+    Canvas: jest.fn().mockImplementation(() => mockCanvas),
+    Circle: jest.fn(),
+    Rect: jest.fn(),
+    Triangle: jest.fn(),
+    IText: jest.fn(),
+    PencilBrush: jest.fn().mockImplementation(() => ({})),
+    CircleBrush: jest.fn().mockImplementation(() => ({})),
+    PatternBrush: jest.fn().mockImplementation(() => ({})),
+    Group: jest.fn(),
+  };
+});
+
+describe("Canvas component", () => {
+  const canvasApiRef = React.createRef<CanvasApi>();
+
+  beforeAll(() => {
+    Object.defineProperty(HTMLElement.prototype, "clientWidth", {
+      configurable: true,
+      value: 800,
+    });
+    Object.defineProperty(HTMLElement.prototype, "clientHeight", {
+      configurable: true,
+      value: 600,
+    });
+  });
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockCanvas.isDrawingMode = false;
+  });
+
+  it("should render and initialize fabric canvas", () => {
+    render(<Canvas ref={canvasApiRef} />);
+    expect(canvasApiRef.current).toBeDefined();
+    expect(fabric.Canvas).toHaveBeenCalledWith(expect.any(HTMLCanvasElement), {
+      width: 800,
+      height: 600,
+      backgroundColor: "white",
+    });
+  });
+
+  describe("Canvas API", () => {
+    it("should add a circle shape", () => {
+      render(<Canvas ref={canvasApiRef} />);
+      act(() => {
+        canvasApiRef.current?.addShape("circle");
+      });
+      expect(fabric.Circle).toHaveBeenCalled();
+      expect(mockCanvas.add).toHaveBeenCalled();
+    });
+
+    it("should add a rectangle shape", () => {
+      render(<Canvas ref={canvasApiRef} />);
+      act(() => {
+        canvasApiRef.current?.addShape("rectangle");
+      });
+      expect(fabric.Rect).toHaveBeenCalled();
+      expect(mockCanvas.add).toHaveBeenCalled();
+    });
+
+    it("should add a square shape", () => {
+      render(<Canvas ref={canvasApiRef} />);
+      act(() => {
+        canvasApiRef.current?.addShape("square");
+      });
+      expect(fabric.Rect).toHaveBeenCalled();
+      expect(mockCanvas.add).toHaveBeenCalled();
+    });
+
+    it("should add a triangle shape", () => {
+      render(<Canvas ref={canvasApiRef} />);
+      act(() => {
+        canvasApiRef.current?.addShape("triangle");
+      });
+      expect(fabric.Triangle).toHaveBeenCalled();
+      expect(mockCanvas.add).toHaveBeenCalled();
+    });
+
+    it("should add a heading text", () => {
+      render(<Canvas ref={canvasApiRef} />);
+      act(() => {
+        canvasApiRef.current?.addText("heading");
+      });
+      expect(fabric.IText).toHaveBeenCalledWith("Heading", expect.any(Object));
+      expect(mockCanvas.add).toHaveBeenCalled();
+      expect(mockCanvas.setActiveObject).toHaveBeenCalled();
+    });
+
+    it("should enable drawing mode with a pencil brush", () => {
+      render(<Canvas ref={canvasApiRef} />);
+      act(() => {
+        canvasApiRef.current?.setBrush("pencil");
+      });
+      expect(mockCanvas.isDrawingMode).toBe(true);
+      expect(fabric.PencilBrush).toHaveBeenCalled();
+    });
+
+    it("should disable drawing mode", () => {
+      render(<Canvas ref={canvasApiRef} />);
+      act(() => {
+        canvasApiRef.current?.setBrush("pencil");
+      });
+      expect(mockCanvas.isDrawingMode).toBe(true);
+      act(() => {
+        canvasApiRef.current?.disableDrawingMode();
+      });
+      expect(mockCanvas.isDrawingMode).toBe(false);
+    });
+  });
+
+  describe("Event Handlers", () => {
+    it("should delete active object on 'Delete' key press", () => {
+      const mockObject = {} as fabric.Object;
+      mockCanvas.getActiveObjects.mockReturnValue([mockObject]);
+      render(<Canvas ref={canvasApiRef} />);
+      fireEvent.keyDown(window, { key: "Delete" });
+      expect(mockCanvas.remove).toHaveBeenCalledWith(mockObject);
+      expect(mockCanvas.discardActiveObject).toHaveBeenCalled();
+      expect(mockCanvas.renderAll).toHaveBeenCalled();
+    });
+
+    it("should delete active object on 'Backspace' key press", () => {
+      const mockObject = {} as fabric.Object;
+      mockCanvas.getActiveObjects.mockReturnValue([mockObject]);
+      render(<Canvas ref={canvasApiRef} />);
+      fireEvent.keyDown(window, { key: "Backspace" });
+      expect(mockCanvas.remove).toHaveBeenCalledWith(mockObject);
+      expect(mockCanvas.discardActiveObject).toHaveBeenCalled();
+      expect(mockCanvas.renderAll).toHaveBeenCalled();
+    });
+
+    it("should resize the canvas on window resize", () => {
+      render(<Canvas ref={canvasApiRef} />);
+      fireEvent(window, new Event("resize"));
+      expect(mockCanvas.setWidth).toHaveBeenCalledWith(800);
+      expect(mockCanvas.setHeight).toHaveBeenCalledWith(600);
+      expect(mockCanvas.renderAll).toHaveBeenCalled();
+    });
+  });
+
+  it("should dispose of the canvas on unmount", () => {
+    const { unmount } = render(<Canvas ref={canvasApiRef} />);
+    unmount();
+    expect(mockCanvas.dispose).toHaveBeenCalled();
+  });
+});
+```
+
 ---
 
 ### TypeScript Notes & Augmentation
