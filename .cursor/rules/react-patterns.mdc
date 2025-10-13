@@ -27,6 +27,35 @@ export default function UserCard({ user, onEdit, className }: UserCardProps) {
 }
 ```
 
+## Imports (React 19+)
+
+- Do not import default `React` just to use JSX. React 19 uses the automatic JSX runtime.
+- Prefer named imports for hooks and APIs so bundlers can tree‑shake unused exports.
+
+```typescript
+// Good — named imports enable tree-shaking; no default React import needed
+import { useState, useCallback, useEffect, useMemo } from "react";
+
+export default function Example() {
+  const [open, setOpen] = useState(false);
+  const handleToggle = useCallback(() => setOpen((v) => !v), []);
+  useEffect(() => {
+    // side effect
+  }, []);
+  const value = useMemo(() => (open ? "on" : "off"), [open]);
+  return <button onClick={handleToggle}>{value}</button>;
+}
+```
+
+```typescript
+// Bad — default import of React is unnecessary in React 19+
+import React from "react";
+
+export default function Example() {
+  return <div />;
+}
+```
+
 ## Props & TypeScript
 
 - Always define explicit prop interfaces
